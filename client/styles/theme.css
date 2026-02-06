@@ -1,0 +1,176 @@
+/* VS Code Dark+ Theme Variables */
+:root {
+  /* Core backgrounds */
+  --bg-primary: #1e1e1e;
+  --bg-secondary: #252526;
+  --bg-tertiary: #2d2d2d;
+  --bg-sidebar: #252526;
+  --bg-activitybar: #333333;
+  --bg-editor: #1e1e1e;
+  --bg-titlebar: #3c3c3c;
+  --bg-statusbar: #007acc;
+  --bg-tab-active: #1e1e1e;
+  --bg-tab-inactive: #2d2d2d;
+  --bg-input: #3c3c3c;
+  --bg-dropdown: #3c3c3c;
+  --bg-hover: #2a2d2e;
+  --bg-selection: #264f78;
+  --bg-modal: #252526;
+  --bg-overlay: rgba(0, 0, 0, 0.6);
+
+  /* Borders */
+  --border-primary: #3c3c3c;
+  --border-active: #007acc;
+  --border-input: #3c3c3c;
+  --border-input-focus: #007acc;
+
+  /* Text */
+  --text-primary: #cccccc;
+  --text-secondary: #969696;
+  --text-muted: #6a6a6a;
+  --text-active: #ffffff;
+  --text-link: #3794ff;
+  --text-statusbar: #ffffff;
+  --text-tab-active: #ffffff;
+  --text-tab-inactive: #969696;
+
+  /* Accent */
+  --accent-primary: #007acc;
+  --accent-hover: #1c97ea;
+  --accent-focus: #007acc;
+  --accent-success: #4ec9b0;
+  --accent-warning: #cca700;
+  --accent-error: #f14c4c;
+  --accent-info: #75beff;
+
+  /* Icons in activity bar */
+  --icon-inactive: #858585;
+  --icon-active: #ffffff;
+
+  /* Scrollbar */
+  --scrollbar-track: transparent;
+  --scrollbar-thumb: rgba(121, 121, 121, 0.4);
+  --scrollbar-thumb-hover: rgba(121, 121, 121, 0.7);
+
+  /* Editor-specific */
+  --editor-line-number: #858585;
+  --editor-line-number-active: #c6c6c6;
+  --editor-cursor: #aeafad;
+  --editor-whitespace: #3b3b3b;
+  --editor-indent-guide: #404040;
+  --editor-selection: #264f78;
+
+  /* Sizing */
+  --activitybar-width: 48px;
+  --sidebar-width: 260px;
+  --statusbar-height: 22px;
+  --titlebar-height: 30px;
+  --tab-height: 35px;
+  --minimap-width: 0px;
+
+  /* Typography */
+  --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
+  --font-size-ui: 13px;
+  --font-size-editor: 14px;
+  --font-size-small: 11px;
+  --line-height-editor: 1.6;
+
+  /* Transitions */
+  --transition-fast: 0.1s ease;
+  --transition-normal: 0.2s ease;
+
+  /* Shadows */
+  --shadow-widget: 0 2px 8px rgba(0, 0, 0, 0.36);
+  --shadow-dropdown: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* Global Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font-ui);
+  font-size: var(--font-size-ui);
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--bg-primary);
+}
+
+/* Selection */
+::selection {
+  background: var(--bg-selection);
+}
+
+/* Links */
+a {
+  color: var(--text-link);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Buttons */
+button {
+  font-family: var(--font-ui);
+  font-size: var(--font-size-ui);
+  cursor: pointer;
+  border: none;
+  outline: none;
+  background: none;
+  color: var(--text-primary);
+}
+
+button:focus-visible {
+  outline: 1px solid var(--accent-primary);
+  outline-offset: -1px;
+}
+
+/* Inputs */
+input, textarea {
+  font-family: var(--font-ui);
+  font-size: var(--font-size-ui);
+  color: var(--text-primary);
+  background: var(--bg-input);
+  border: 1px solid var(--border-input);
+  padding: 4px 8px;
+  outline: none;
+}
+
+input:focus, textarea:focus {
+  border-color: var(--border-input-focus);
+}
