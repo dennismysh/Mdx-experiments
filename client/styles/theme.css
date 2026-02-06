@@ -174,3 +174,25 @@ input, textarea {
 input:focus, textarea:focus {
   border-color: var(--border-input-focus);
 }
+
+/* Responsive: Tablet and small screens */
+@media (max-width: 768px) {
+  .titlebar-center {
+    display: none !important;
+  }
+
+  .titlebar {
+    padding: 0 6px !important;
+  }
+}
+
+/* Responsive: Mobile portrait */
+@media (max-width: 480px) {
+  .titlebar-menu {
+    display: none !important;
+  }
+
+  .titlebar-username {
+    display: none !important;
+  }
+}
