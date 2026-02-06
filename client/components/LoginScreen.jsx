@@ -1,8 +1,29 @@
-import React from 'react';
-import { VscLock, VscNote } from 'react-icons/vsc';
+import React, { useState } from 'react';
+import { VscLock, VscNote, VscKey } from 'react-icons/vsc';
 import { FcGoogle } from 'react-icons/fc';
 
-export default function LoginScreen({ onDevLogin, onDemoLogin, demoMode, error }) {
+const STORAGE_PREFIX = 'enc-notes:';
+
+function hasExistingDemoKeys() {
+  try {
+    const raw = localStorage.getItem(`${STORAGE_PREFIX}master-key-data`);
+    return raw !== null && raw !== 'null';
+  } catch {
+    return false;
+  }
+}
+
+export default function LoginScreen({ onDevLogin, onDemoLogin, onDemoFresh, demoMode, error }) {
+  const [showChoice, setShowChoice] = useState(false);
+
+  const handleTryDemo = () => {
+    if (hasExistingDemoKeys()) {
+      setShowChoice(true);
+    } else {
+      onDemoLogin();
+    }
+  };
+
   return (
     <div style={styles.container}>
       <div style={styles.card}>
@@ -30,15 +51,42 @@ export default function LoginScreen({ onDevLogin, onDemoLogin, demoMode, error }
         </div>
 
         {demoMode ? (
-          <>
-            <button onClick={onDemoLogin} style={styles.demoBtn}>
-              Try Demo
-            </button>
-            <p style={styles.demoNote}>
-              Running in demo mode — notes are encrypted and stored locally in
-              your browser. No server required.
-            </p>
-          </>
+          showChoice ? (
+            <>
+              <p style={styles.choiceText}>
+                You have an existing encrypted session. How would you like to continue?
+              </p>
+
+              <button onClick={onDemoLogin} style={styles.demoBtn}>
+                <VscKey size={16} />
+                <span>I have my recovery key</span>
+              </button>
+
+              <button
+                onClick={() => { setShowChoice(false); onDemoFresh(); }}
+                style={styles.freshBtn}
+              >
+                Generate new keys
+              </button>
+
+              <button
+                onClick={() => setShowChoice(false)}
+                style={styles.backBtn}
+              >
+                Back
+              </button>
+            </>
+          ) : (
+            <>
+              <button onClick={handleTryDemo} style={styles.demoBtn}>
+                Try Demo
+              </button>
+              <p style={styles.demoNote}>
+                Running in demo mode — notes are encrypted and stored locally in
+                your browser. No server required.
+              </p>
+            </>
+          )
         ) : (
           <>
             <a href="/auth/google" style={styles.googleBtn}>
@@ -128,6 +176,10 @@ const styles = {
     marginBottom: 12,
   },
   demoBtn: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
     width: '100%',
     padding: '10px 16px',
     background: 'var(--accent-primary)',
@@ -138,6 +190,32 @@ const styles = {
     fontWeight: 500,
     cursor: 'pointer',
     marginBottom: 12,
+  },
+  freshBtn: {
+    width: '100%',
+    padding: '10px 16px',
+    background: 'var(--bg-tertiary)',
+    color: 'var(--text-secondary)',
+    border: '1px solid var(--border-primary)',
+    borderRadius: 4,
+    fontSize: 13,
+    cursor: 'pointer',
+    marginBottom: 8,
+  },
+  backBtn: {
+    padding: '6px 16px',
+    background: 'none',
+    color: 'var(--text-muted)',
+    border: 'none',
+    fontSize: 12,
+    cursor: 'pointer',
+    marginBottom: 12,
+  },
+  choiceText: {
+    color: 'var(--text-secondary)',
+    fontSize: 13,
+    lineHeight: 1.5,
+    marginBottom: 16,
   },
   demoNote: {
     color: 'var(--text-muted)',

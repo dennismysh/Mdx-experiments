@@ -31,6 +31,13 @@ export default function App() {
     setMasterKey(key);
   }, []);
 
+  const handleLogout = useCallback(async () => {
+    await auth.logout();
+    setMasterKey(null);
+    setOpenTabs([]);
+    setActiveTabId(null);
+  }, [auth]);
+
   const handleKeysCreated = useCallback(() => {
     auth.setHasEncryptionKeys(true);
     auth.refresh();
@@ -89,6 +96,7 @@ export default function App() {
       <LoginScreen
         onDevLogin={auth.devLogin}
         onDemoLogin={auth.demoLogin}
+        onDemoFresh={auth.demoLoginFresh}
         demoMode={auth.demoMode}
         error={auth.error}
       />
@@ -100,12 +108,12 @@ export default function App() {
   }
 
   if (!masterKey) {
-    return <UnlockScreen user={auth.user} onUnlock={handleUnlock} onLogout={auth.logout} />;
+    return <UnlockScreen user={auth.user} onUnlock={handleUnlock} onLogout={handleLogout} />;
   }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      <TitleBar user={auth.user} onLogout={auth.logout} />
+      <TitleBar user={auth.user} onLogout={handleLogout} />
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
         <ActivityBar
           activePanel={activePanel}
