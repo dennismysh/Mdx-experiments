@@ -71,9 +71,12 @@ export default function Editor({ note, onSave }) {
           '.cm-content': {
             padding: '16px 0',
             lineHeight: 'var(--line-height-editor)',
+            minHeight: '100%',
+            touchAction: 'manipulation',
           },
           '.cm-scroller': {
             overflow: 'auto',
+            touchAction: 'manipulation',
           },
           '.cm-gutters': {
             background: 'var(--bg-editor)',
@@ -203,6 +206,7 @@ export default function Editor({ note, onSave }) {
         {(viewMode === 'editor' || viewMode === 'split') && (
           <div
             ref={editorRef}
+            onClick={() => viewRef.current?.focus()}
             style={{
               ...styles.editorPane,
               width: viewMode === 'split' ? '50%' : '100%',
