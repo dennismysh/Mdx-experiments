@@ -3,18 +3,18 @@ import { VscNote, VscChevronDown } from 'react-icons/vsc';
 
 export default function TitleBar({ user, onLogout }) {
   return (
-    <div style={styles.titleBar}>
+    <div style={styles.titleBar} className="titlebar">
       <div style={styles.left}>
         <VscNote size={14} color="var(--accent-primary)" />
         <span style={styles.appName}>Encrypted Notes</span>
-        <div style={styles.menuItems}>
+        <div style={styles.menuItems} className="titlebar-menu">
           <span style={styles.menuItem}>File</span>
           <span style={styles.menuItem}>Edit</span>
           <span style={styles.menuItem}>View</span>
           <span style={styles.menuItem}>Help</span>
         </div>
       </div>
-      <div style={styles.center}>
+      <div style={styles.center} className="titlebar-center">
         <span style={styles.title}>Encrypted Notes — MDX Editor</span>
       </div>
       <div style={styles.right}>
@@ -22,7 +22,7 @@ export default function TitleBar({ user, onLogout }) {
           {user.avatar_url && (
             <img src={user.avatar_url} alt="" style={styles.avatar} />
           )}
-          <span style={styles.userName}>{user.display_name}</span>
+          <span style={styles.userName} className="titlebar-username">{user.display_name}</span>
           <button onClick={onLogout} style={styles.logoutBtn}>Sign Out</button>
         </div>
       </div>
@@ -42,18 +42,23 @@ const styles = {
     userSelect: 'none',
     borderBottom: '1px solid var(--border-primary)',
     flexShrink: 0,
+    position: 'relative',
+    overflow: 'hidden',
   },
   left: {
     display: 'flex',
     alignItems: 'center',
     gap: 10,
     WebkitAppRegion: 'no-drag',
+    minWidth: 0,
+    overflow: 'hidden',
   },
   appName: {
     fontSize: 12,
     fontWeight: 600,
     color: 'var(--text-active)',
     marginRight: 8,
+    whiteSpace: 'nowrap',
   },
   menuItems: {
     display: 'flex',
@@ -80,6 +85,8 @@ const styles = {
     alignItems: 'center',
     gap: 8,
     WebkitAppRegion: 'no-drag',
+    flexShrink: 0,
+    whiteSpace: 'nowrap',
   },
   userMenu: {
     display: 'flex',
