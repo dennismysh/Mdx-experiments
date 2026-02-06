@@ -204,25 +204,23 @@ export default function Editor({ note, onSave }) {
 
       {/* Editor + Preview */}
       <div style={styles.editorArea}>
-        {(viewMode === 'editor' || viewMode === 'split') && (
-          <div
-            ref={editorRef}
-            onClick={() => viewRef.current?.focus()}
-            style={{
-              ...styles.editorPane,
-              width: viewMode === 'split' ? '50%' : '100%',
-              borderRight: viewMode === 'split' ? '1px solid var(--border-primary)' : 'none',
-            }}
-          />
-        )}
-        {(viewMode === 'preview' || viewMode === 'split') && (
-          <div style={{
-            ...styles.previewPane,
+        <div
+          ref={editorRef}
+          onClick={() => viewRef.current?.focus()}
+          style={{
+            ...styles.editorPane,
             width: viewMode === 'split' ? '50%' : '100%',
-          }}>
-            <MdxPreview content={content} />
-          </div>
-        )}
+            borderRight: viewMode === 'split' ? '1px solid var(--border-primary)' : 'none',
+            display: viewMode === 'preview' ? 'none' : 'block',
+          }}
+        />
+        <div style={{
+          ...styles.previewPane,
+          width: viewMode === 'split' ? '50%' : '100%',
+          display: viewMode === 'editor' ? 'none' : 'block',
+        }}>
+          <MdxPreview content={content} />
+        </div>
       </div>
     </div>
   );
