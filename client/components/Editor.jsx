@@ -18,6 +18,7 @@ export default function Editor({ note, onSave }) {
   const [content, setContent] = useState('');
   const [title, setTitle] = useState('');
   const [dirty, setDirty] = useState(false);
+  const hasNote = !!note;
 
   // Sync note to editor
   useEffect(() => {
@@ -50,7 +51,7 @@ export default function Editor({ note, onSave }) {
     });
 
     const state = EditorState.create({
-      doc: content,
+      doc: note?.content || '',
       extensions: [
         lineNumbers(),
         highlightActiveLine(),
@@ -104,7 +105,7 @@ export default function Editor({ note, onSave }) {
       viewRef.current?.destroy();
       viewRef.current = null;
     };
-  }, []);
+  }, [hasNote]);
 
   // Auto-save debounce
   useEffect(() => {
