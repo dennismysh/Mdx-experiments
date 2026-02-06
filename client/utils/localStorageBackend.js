@@ -29,20 +29,6 @@ function uuid() {
     });
 }
 
-// --- Demo raw master key (for auto-unlock on refresh) ---
-
-export function storeDemoRawKey(base64Key) {
-  setJSON('demo-raw-master-key', base64Key);
-}
-
-export function getDemoRawKey() {
-  return getJSON('demo-raw-master-key', null);
-}
-
-function clearDemoRawKey() {
-  localStorage.removeItem(k('demo-raw-master-key'));
-}
-
 // --- Demo user ---
 
 const DEMO_USER = {
@@ -77,7 +63,6 @@ export const localAuthApi = {
 
   logout: async () => {
     setJSON('logged-in', false);
-    clearDemoRawKey();
     return { ok: true };
   },
 };
@@ -103,7 +88,6 @@ export const localKeysApi = {
   reset: async () => {
     localStorage.removeItem(k('master-key-data'));
     localStorage.removeItem(k('notes'));
-    clearDemoRawKey();
     return { ok: true };
   },
 };
