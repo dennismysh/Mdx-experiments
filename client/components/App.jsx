@@ -10,7 +10,16 @@ import Sidebar from './Sidebar.jsx';
 import EditorTabs from './EditorTabs.jsx';
 import Editor from './Editor.jsx';
 import StatusBar from './StatusBar.jsx';
-import { importMasterKey } from '../utils/crypto.js';
+import {
+  importMasterKey,
+  generateMasterKey,
+  generateRecoveryKey,
+  encryptMasterKey,
+  hashRecoveryKey,
+  exportMasterKey,
+} from '../utils/crypto.js';
+import { keysApi, isDemoMode } from '../utils/api.js';
+import { storeDemoRawKey, getDemoRawKey } from '../utils/localStorageBackend.js';
 
 export default function App() {
   const auth = useAuth();
@@ -22,6 +31,16 @@ export default function App() {
 
   const notes = useNotes(masterKey);
 
+  // Auto-unlock for demo mode: restore master key from localStorage on refresh
+  useEffect(() => {
+    if (auth.user && auth.hasEncryptionKeys && !masterKey && isDemoMode()) {
+      const rawKey = getDemoRawKey();
+      if (rawKey) {
+        importMasterKey(rawKey).then(setMasterKey).catch(console.error);
+      }
+    }
+  }, [auth.user, auth.hasEncryptionKeys, masterKey]);
+
   // Load notes when master key is available
   useEffect(() => {
     if (masterKey) notes.loadNotes();
@@ -30,6 +49,30 @@ export default function App() {
   const handleUnlock = useCallback((key) => {
     setMasterKey(key);
   }, []);
+
+  // Demo login: auto-generate encryption keys so users skip onboarding + unlock
+  const handleDemoLogin = useCallback(async () => {
+    try {
+      // Generate and store encryption keys BEFORE login so demoLogin detects them
+      const key = await generateMasterKey();
+      const recovery = generateRecoveryKey();
+      const { encryptedMasterKey, salt, iv } = await encryptMasterKey(key, recovery);
+      const recoveryKeyHash = await hashRecoveryKey(recovery);
+      await keysApi.storeMasterKey({ encryptedMasterKey, salt, iv, recoveryKeyHash });
+
+      // Store raw key for auto-unlock on page refresh
+      const rawKeyBase64 = await exportMasterKey(key);
+      storeDemoRawKey(rawKeyBase64);
+
+      // Now login — localStorage already has keys, so hasEncryptionKeys will be true
+      await auth.demoLogin();
+
+      // Set master key directly, skipping the unlock screen
+      setMasterKey(key);
+    } catch (err) {
+      console.error('Demo setup failed:', err);
+    }
+  }, [auth]);
 
   const handleKeysCreated = useCallback(() => {
     auth.setHasEncryptionKeys(true);
@@ -88,7 +131,7 @@ export default function App() {
     return (
       <LoginScreen
         onDevLogin={auth.devLogin}
-        onDemoLogin={auth.demoLogin}
+        onDemoLogin={handleDemoLogin}
         demoMode={auth.demoMode}
         error={auth.error}
       />
