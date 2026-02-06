@@ -2,7 +2,7 @@ import React from 'react';
 import { VscLock, VscNote } from 'react-icons/vsc';
 import { FcGoogle } from 'react-icons/fc';
 
-export default function LoginScreen({ onDevLogin, error }) {
+export default function LoginScreen({ onDevLogin, onDemoLogin, demoMode, error }) {
   return (
     <div style={styles.container}>
       <div style={styles.card}>
@@ -29,15 +29,27 @@ export default function LoginScreen({ onDevLogin, error }) {
           </div>
         </div>
 
-        <a href="/auth/google" style={styles.googleBtn}>
-          <FcGoogle size={20} />
-          <span>Sign in with Google</span>
-        </a>
-
-        {/* Dev login for local development */}
-        <button onClick={onDevLogin} style={styles.devBtn}>
-          Dev Login (local only)
-        </button>
+        {demoMode ? (
+          <>
+            <button onClick={onDemoLogin} style={styles.demoBtn}>
+              Try Demo
+            </button>
+            <p style={styles.demoNote}>
+              Running in demo mode — notes are encrypted and stored locally in
+              your browser. No server required.
+            </p>
+          </>
+        ) : (
+          <>
+            <a href="/auth/google" style={styles.googleBtn}>
+              <FcGoogle size={20} />
+              <span>Sign in with Google</span>
+            </a>
+            <button onClick={onDevLogin} style={styles.devBtn}>
+              Dev Login (local only)
+            </button>
+          </>
+        )}
 
         {error && <p style={styles.error}>{error}</p>}
 
@@ -114,6 +126,25 @@ const styles = {
     cursor: 'pointer',
     textDecoration: 'none',
     marginBottom: 12,
+  },
+  demoBtn: {
+    width: '100%',
+    padding: '10px 16px',
+    background: 'var(--accent-primary)',
+    color: '#ffffff',
+    border: 'none',
+    borderRadius: 4,
+    fontSize: 14,
+    fontWeight: 500,
+    cursor: 'pointer',
+    marginBottom: 12,
+  },
+  demoNote: {
+    color: 'var(--text-muted)',
+    fontSize: 11,
+    lineHeight: 1.6,
+    marginBottom: 16,
+    padding: '0 8px',
   },
   devBtn: {
     width: '100%',

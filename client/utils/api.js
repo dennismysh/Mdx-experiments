@@ -1,4 +1,29 @@
+import { localAuthApi, localKeysApi, localNotesApi } from './localStorageBackend.js';
+
 const API_BASE = '';
+
+// Detect demo mode: no backend available (GitHub Pages, static hosting)
+let _demoMode = null;
+
+export async function detectDemoMode() {
+  if (_demoMode !== null) return _demoMode;
+  try {
+    const res = await fetch(`${API_BASE}/auth/me`, {
+      credentials: 'include',
+      signal: AbortSignal.timeout(3000),
+    });
+    _demoMode = !res.ok && res.status !== 200;
+    // Even a 200 with {user:null} is fine — server is reachable
+    if (res.ok) _demoMode = false;
+  } catch {
+    _demoMode = true;
+  }
+  return _demoMode;
+}
+
+export function isDemoMode() {
+  return _demoMode === true;
+}
 
 async function request(url, options = {}) {
   const res = await fetch(`${API_BASE}${url}`, {
@@ -20,15 +45,14 @@ async function request(url, options = {}) {
   return res.json();
 }
 
-// Auth
-export const authApi = {
+// Server-backed API
+const serverAuthApi = {
   me: () => request('/auth/me'),
   devLogin: () => request('/auth/dev-login', { method: 'POST' }),
   logout: () => request('/auth/logout', { method: 'POST' }),
 };
 
-// Keys
-export const keysApi = {
+const serverKeysApi = {
   storeMasterKey: (data) => request('/api/keys/store-master-key', {
     method: 'POST',
     body: JSON.stringify(data),
@@ -44,8 +68,7 @@ export const keysApi = {
   }),
 };
 
-// Notes
-export const notesApi = {
+const serverNotesApi = {
   list: () => request('/api/notes'),
   get: (id) => request(`/api/notes/${id}`),
   create: (data) => request('/api/notes', {
@@ -58,3 +81,19 @@ export const notesApi = {
   }),
   delete: (id) => request(`/api/notes/${id}`, { method: 'DELETE' }),
 };
+
+// Export proxies that switch between server and local based on demo mode
+function createProxy(serverApi, localApi) {
+  return new Proxy({}, {
+    get(_, prop) {
+      return (...args) => {
+        if (_demoMode) return localApi[prop](...args);
+        return serverApi[prop](...args);
+      };
+    },
+  });
+}
+
+export const authApi = createProxy(serverAuthApi, localAuthApi);
+export const keysApi = createProxy(serverKeysApi, localKeysApi);
+export const notesApi = createProxy(serverNotesApi, localNotesApi);

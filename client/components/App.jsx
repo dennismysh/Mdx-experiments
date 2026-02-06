@@ -85,7 +85,14 @@ export default function App() {
   }
 
   if (!auth.user) {
-    return <LoginScreen onDevLogin={auth.devLogin} error={auth.error} />;
+    return (
+      <LoginScreen
+        onDevLogin={auth.devLogin}
+        onDemoLogin={auth.demoLogin}
+        demoMode={auth.demoMode}
+        error={auth.error}
+      />
+    );
   }
 
   if (!auth.hasEncryptionKeys) {
