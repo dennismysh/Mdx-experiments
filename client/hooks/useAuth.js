@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { authApi, detectDemoMode, isDemoMode } from '../utils/api.js';
+import { authApi, keysApi, detectDemoMode, isDemoMode } from '../utils/api.js';
 
 export function useAuth() {
   const [user, setUser] = useState(null);
@@ -58,6 +58,18 @@ export function useAuth() {
     }
   }, []);
 
+  const demoLoginFresh = useCallback(async () => {
+    try {
+      setError(null);
+      await keysApi.reset();
+      const data = await authApi.demoLogin();
+      setUser(data.user);
+      setHasEncryptionKeys(false);
+    } catch (err) {
+      setError(err.message);
+    }
+  }, []);
+
   const logout = useCallback(async () => {
     await authApi.logout();
     setUser(null);
@@ -67,6 +79,6 @@ export function useAuth() {
   return {
     user, hasEncryptionKeys, setHasEncryptionKeys,
     loading, error, demoMode,
-    devLogin, demoLogin, logout, refresh: checkAuth,
+    devLogin, demoLogin, demoLoginFresh, logout, refresh: checkAuth,
   };
 }
