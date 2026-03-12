@@ -7,6 +7,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import crypto from 'crypto';
 import { initDb } from './db/index.js';
 import { configurePassport } from './routes/auth.js';
 import authRoutes from './routes/auth.js';
@@ -31,7 +32,12 @@ app.use(helmet({
   },
 }));
 
-app.use(cors({ origin: true, credentials: true }));
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production'
+    ? (process.env.ALLOWED_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean)
+    : true,
+  credentials: true,
+}));
 app.use(express.json({ limit: '10mb' }));
 app.use(cookieParser());
 
@@ -41,11 +47,13 @@ if (!process.env.SESSION_SECRET) {
     console.error('FATAL: SESSION_SECRET environment variable is required in production');
     process.exit(1);
   }
-  console.warn('WARNING: SESSION_SECRET not set, using insecure default for development only');
+  console.warn('WARNING: SESSION_SECRET not set, generating random secret for this dev session');
 }
 
+const sessionSecret = process.env.SESSION_SECRET || crypto.randomBytes(32).toString('hex');
+
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'dev-secret-DO-NOT-USE-IN-PRODUCTION',
+  secret: sessionSecret,
   resave: false,
   saveUninitialized: false,
   cookie: {
