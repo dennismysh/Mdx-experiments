@@ -36,8 +36,16 @@ app.use(express.json({ limit: '10mb' }));
 app.use(cookieParser());
 
 // Sessions
+if (!process.env.SESSION_SECRET) {
+  if (process.env.NODE_ENV === 'production') {
+    console.error('FATAL: SESSION_SECRET environment variable is required in production');
+    process.exit(1);
+  }
+  console.warn('WARNING: SESSION_SECRET not set, using insecure default for development only');
+}
+
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'dev-secret-change-in-production',
+  secret: process.env.SESSION_SECRET || 'dev-secret-DO-NOT-USE-IN-PRODUCTION',
   resave: false,
   saveUninitialized: false,
   cookie: {
