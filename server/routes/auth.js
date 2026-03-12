@@ -89,9 +89,10 @@ router.post('/logout', (req, res) => {
 
 // Dev-only: mock login for local development without Google credentials
 router.post('/dev-login', (req, res) => {
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === 'production' || process.env.DISABLE_DEV_LOGIN === 'true') {
     return res.status(403).json({ error: 'Not available in production' });
   }
+  console.warn('WARNING: Dev login used — this endpoint must not be available in production');
   const db = getDb();
   const devGoogleId = 'dev-user-001';
   let user = db.prepare('SELECT * FROM users WHERE google_id = ?').get(devGoogleId);
